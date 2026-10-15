@@ -13,4 +13,5 @@ from .opusv1_fusion.opus_transformer import OPUSV1FusionTransformer
 from .opusv2.opus import OPUSV2
 from .opusv2.opus_head import OPUSV2Head
 from .opusv2.opus_dcd_head import OPUSV2DCDHead
+from .opusv2.opus_dcd_sp4_head import OPUSV2DCDSP4Head
 from .opusv2.opus_transformer import OPUSV2Transformer
