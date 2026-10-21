@@ -59,8 +59,8 @@ def sampling_4d(sample_points, mlvl_feats, scale_weights, occ2img, image_h, imag
     sample_points_cam = sample_points_cam[..., 0:2] / homo_nonzero  # [B, T, N, Q, GP, 2]
 
     # normalize
-    sample_points_cam[..., 0] /= image_w
-    sample_points_cam[..., 1] /= image_h
+    image_size_xy = sample_points_cam.new_tensor([image_w, image_h])
+    sample_points_cam = sample_points_cam / image_size_xy
 
     # check if out of image
     valid_mask = ((homo > eps) \
