@@ -89,9 +89,8 @@ class Densifier(BaseModule):
         voxel_num = self.voxel_num.to(pts.dtype)
         loc = torch.floor(pts * voxel_num)
         if clip:
-            loc[..., 0] = loc[..., 0].clamp(0, self.voxel_num[0] - 1)
-            loc[..., 1] = loc[..., 1].clamp(0, self.voxel_num[1] - 1)
-            loc[..., 2] = loc[..., 2].clamp(0, self.voxel_num[2] - 1)
+            loc = torch.minimum(
+                torch.maximum(loc, torch.zeros_like(loc)), voxel_num - 1)
         
         centers = decode_points((loc + 0.5) / voxel_num, self.pc_range)
         return centers
