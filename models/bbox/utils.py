@@ -78,16 +78,20 @@ def decode_bbox(bboxes, pc_range=None):
 
 
 def encode_points(points, pc_range=None):
-    points = points.clone()
-    points[..., 0] = (points[..., 0] - pc_range[0]) / (pc_range[3] - pc_range[0])
-    points[..., 1] = (points[..., 1] - pc_range[1]) / (pc_range[4] - pc_range[1])
-    points[..., 2] = (points[..., 2] - pc_range[2]) / (pc_range[5] - pc_range[2])
-    return points
+    pc_range = torch.as_tensor(pc_range, device=points.device)
+    pc_min = pc_range[:3]
+    pc_size = pc_range[3:6] - pc_min
+    xyz = (points[..., :3] - pc_min) / pc_size
+    if points.shape[-1] > 3:
+        xyz = torch.cat([xyz, points[..., 3:]], dim=-1)
+    return xyz.to(dtype=points.dtype)
 
 
 def decode_points(points, pc_range=None):
-    points = points.clone()
-    points[..., 0] = points[..., 0] * (pc_range[3] - pc_range[0]) + pc_range[0]
-    points[..., 1] = points[..., 1] * (pc_range[4] - pc_range[1]) + pc_range[1]
-    points[..., 2] = points[..., 2] * (pc_range[5] - pc_range[2]) + pc_range[2]
-    return points
+    pc_range = torch.as_tensor(pc_range, device=points.device)
+    pc_min = pc_range[:3]
+    pc_size = pc_range[3:6] - pc_min
+    xyz = points[..., :3] * pc_size + pc_min
+    if points.shape[-1] > 3:
+        xyz = torch.cat([xyz, points[..., 3:]], dim=-1)
+    return xyz.to(dtype=points.dtype)
